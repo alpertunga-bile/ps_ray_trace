@@ -32,7 +32,7 @@ include_directories(
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 # -- Executable Creation
 
-find_program(ISPC_EXECUTABLE ispc PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ispc/bin)
+find_program(ISPC_EXECUTABLE ispc PATHS ${CMAKE_CURRENT_SOURCE_DIR}/third-party/ispc/bin)
 if (NOT ISPC_EXECUTABLE)
     message(FATAL_ERROR "Failed to find ispc")
 else()
@@ -71,7 +71,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:--arch
 
 if(MSVC)
     # Group ISPC files inside Visual Studio
-    source_group("ISPC" FILES "${CMAKE_CURRENT_SOURCE_DIR}/simple.ispc")
+    source_group("ISPC" FILES ${ISPC_FILES})
 endif()
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

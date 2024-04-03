@@ -33,4 +33,4 @@
 
 venv/
 build/
-ispc/
+third-party/
