@@ -14,7 +14,7 @@ endif()
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 # -- Files
 
-file(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders/*.h)
+file(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders/*.h ${CMAKE_CURRENT_SOURCE_DIR}/includes/*.h)
 file(GLOB ISPC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders/*.ispc)
 file(GLOB CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/*.cpp main.cpp)
 
