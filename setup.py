@@ -35,7 +35,7 @@ def prepare_venv() -> None:
 
 
 # --------------------------------------------------------------------------------------------------------------------
-# -- Creating ISPC functions
+# -- Downloading ISPC functions
 
 
 def get_zipfilepath(folder: str, version: str) -> str:
