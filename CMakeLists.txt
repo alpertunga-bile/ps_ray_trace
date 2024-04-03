@@ -67,6 +67,10 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY ISPC_INSTRUCTION_SETS "avx2")
 target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-O2>)
 target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:--arch=x86-64>)
 
+if (${CMAKE_BUILD_TYPE} MATCHES Debug)
+    target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-g>)
+endif()
+
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
 if(MSVC)
