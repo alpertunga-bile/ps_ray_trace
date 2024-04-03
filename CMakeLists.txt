@@ -32,14 +32,16 @@ include_directories(
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 # -- Executable Creation
 
-find_program(ISPC_EXECUTABLE ispc PATHS ${CMAKE_CURRENT_SOURCE_DIR}/third-party/ispc/bin)
-if (NOT ISPC_EXECUTABLE)
-    message(FATAL_ERROR "Failed to find ispc")
-else()
-    message(STATUS "ispc is found")
-endif()
+if(WIN32)
+    find_program(ISPC_EXECUTABLE ispc PATHS ${CMAKE_CURRENT_SOURCE_DIR}/third-party/ispc/bin)
+    if (NOT ISPC_EXECUTABLE)
+        message(FATAL_ERROR "Failed to find ispc")
+    else()
+        message(STATUS "ispc is found")
+    endif()
 
-set(CMAKE_ISPC_COMPILER ${ISPC_EXECUTABLE})
+    set(CMAKE_ISPC_COMPILER ${ISPC_EXECUTABLE})
+endif()
 
 if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.19.2 AND (("${CMAKE_GENERATOR}" MATCHES "Make") OR ("${CMAKE_GENERATOR}" MATCHES "Ninja")) )
     enable_language(ISPC)
@@ -64,11 +66,12 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY ISPC_INSTRUCTION_SETS "avx2")
-target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-O2>)
-target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:--arch=x86-64>)
 
 if (${CMAKE_BUILD_TYPE} MATCHES Debug)
     target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-g>)
+    target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-O0>)
+elseif(${CMAKE_BUILD_TYPE} MATCHES Release)
+    target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-O2>)
 endif()
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------
