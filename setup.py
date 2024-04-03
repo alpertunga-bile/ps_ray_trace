@@ -3,8 +3,13 @@ from os.path import join, exists
 from os import rename, remove
 from platform import system
 from subprocess import run
+from shutil import rmtree
+
 
 from argparse import ArgumentParser
+
+# --------------------------------------------------------------------------------------------------------------------
+# -- Environment Functions
 
 
 def run_command(command: str) -> bool:
@@ -15,18 +20,39 @@ def run_command(command: str) -> bool:
 
 def prepare_venv() -> None:
     if exists("venv"):
-        print("Environment is already created")
+        print("/_\ Environment is already created")
         return
 
     python_exe = f"{join('venv', 'Scripts', 'python.exe')}"
 
-    print("Creating virtual environment")
+    print("/_\ Creating virtual environment")
     run_command("python -m venv venv")
 
-    print("Installing required packages")
-    run_command(f"{python_exe} -m pip install requests tqdm")
+    print("/_\ Installing required packages")
+    run_command(f"{python_exe} -m pip install requests tqdm beautifulsoup4 lxml")
 
-    print("Creation is completed")
+    print("/_\ Creation is completed")
+
+
+# --------------------------------------------------------------------------------------------------------------------
+# -- Creating ISPC functions
+
+
+def get_zipfilepath(folder: str, version: str) -> str:
+    return join(folder, f"ispc-v{version}-windows.zip")
+
+
+def get_current_version_ispc() -> str:
+    from bs4 import BeautifulSoup
+    from requests import get
+
+    doc = BeautifulSoup(
+        get("https://github.com/ispc/ispc/tags").content, features="lxml"
+    )
+
+    version = doc.find("a", {"class": "Link--primary Link"}).get_text().replace("v", "")
+
+    return version
 
 
 def download_ispc_zip(version: str, ispc_zip_filename: str) -> None:
@@ -47,7 +73,7 @@ def download_ispc_zip(version: str, ispc_zip_filename: str) -> None:
             unit="B",
             unit_scale=True,
             unit_divisor=1024,
-            desc="Installing ISPC",
+            desc=f"/_\ Installing ISPC {version}",
         ) as pbar:
             for chunk in req.iter_content(chunk_size=1024):
                 if chunk:
@@ -58,15 +84,37 @@ def download_ispc_zip(version: str, ispc_zip_filename: str) -> None:
 def prepare_ispc(version: str, ispc_zip_filename: str) -> None:
     download_ispc_zip(version, ispc_zip_filename)
 
-    print("Extracting ISPC")
+    print("/_\ Extracting ISPC")
     with ZipFile(ispc_zip_filename, "r") as zip_f:
         zip_f.extractall()
-    zip_f.close()
 
     rename(ispc_zip_filename[:-4], "ispc")
     remove(ispc_zip_filename)
 
-    print("Preparing ISPC is completed")
+    print("/_\ Preparing ISPC is completed")
+
+
+# --------------------------------------------------------------------------------------------------------------------
+# -- Upgrading ISPC functions
+
+
+def upgrade_ispc(third_party_folder: str, ispc_folder: str) -> None:
+    current_version = get_current_version_ispc()
+    v_current_version = "v" + current_version
+
+    with open(join(ispc_folder, "ReleaseNotes.txt")) as version_file:
+        installed_version = version_file.readline().split(" ")[1]
+
+    if installed_version == v_current_version:
+        print("/_\ No need to update")
+        return
+
+    print(f"/_\ Removing ISPC {installed_version}")
+    rmtree(ispc_folder)
+
+    new_ispc_zip_filename = get_zipfilepath(third_party_folder, current_version)
+
+    prepare_ispc(current_version, new_ispc_zip_filename)
 
 
 if __name__ == "__main__":
@@ -75,9 +123,6 @@ if __name__ == "__main__":
     parser.add_argument("--setup_project", action="store_true", default=False)
     args = parser.parse_args()
 
-    ispc_folder = "ispc"
-    ispc_version = "1.23.0"
-    ispc_zip_filename = f"ispc-v{ispc_version}-windows.zip"
     opsys = system()
 
     if opsys != "Windows":
@@ -90,8 +135,14 @@ if __name__ == "__main__":
         prepare_venv()
         exit(0)
 
-    if exists("ispc"):
-        print("ISPC is already installed")
+    third_party_folder = "third-party"
+    ispc_folder = join(third_party_folder, "ispc")
+    ispc_version = get_current_version_ispc()
+    ispc_zip_filename = get_zipfilepath(third_party_folder, ispc_version)
+
+    if exists(ispc_folder):
+        print("/_\ ISPC is already installed")
+        upgrade_ispc(third_party_folder, ispc_folder)
         exit(0)
 
     prepare_ispc(version=ispc_version, ispc_zip_filename=ispc_zip_filename)
