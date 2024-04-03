@@ -1,6 +1,6 @@
 from zipfile import ZipFile
 from os.path import join, exists
-from os import rename, remove
+from os import rename, remove, mkdir
 from platform import system
 from subprocess import run
 from shutil import rmtree
@@ -124,6 +124,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     opsys = system()
+    third_party_folder = "third-party"
+
+    if exists(third_party_folder) is False:
+        mkdir("third-party")
+        print("/_\ Third party is created")
 
     if opsys != "Windows":
         print(
@@ -135,7 +140,6 @@ if __name__ == "__main__":
         prepare_venv()
         exit(0)
 
-    third_party_folder = "third-party"
     ispc_folder = join(third_party_folder, "ispc")
     ispc_version = get_current_version_ispc()
     ispc_zip_filename = get_zipfilepath(third_party_folder, ispc_version)
