@@ -40,7 +40,8 @@ namespace ispc { /* namespace */
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 extern "C" {
 #endif // __cplusplus
-    extern void calculate_colors(float * pixels, int32_t width, int32_t height);
+    extern void calculate_colors(float * pixels, int32_t * colors, int32_t size);
+    extern void calculate_pixels(float * pixels, int32_t width, int32_t height);
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 } /* end extern C */
 #endif // __cplusplus

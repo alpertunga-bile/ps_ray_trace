@@ -1,0 +1,23 @@
+#pragma once
+
+#include "vec3.isph"
+
+struct ray
+{
+    vec3 origin;
+    vec3 dir;
+};
+
+inline ray make_ray(vec3& origin, vec3& direction)
+{
+    ray r;
+    r.origin = origin;
+    r.dir = direction;
+
+    return r;
+}
+
+inline vec3 ray_at(ray& r, double t)
+{
+    return r.origin + t * r.dir; 
+}
