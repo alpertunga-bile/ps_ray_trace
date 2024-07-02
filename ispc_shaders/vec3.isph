@@ -1,9 +1,6 @@
 #pragma once
 
-struct vec3
-{
-    double x, y, z;
-};
+typedef float<3> vec3;
 
 inline vec3 make_vec3(double _x, double _y, double _z)
 {
