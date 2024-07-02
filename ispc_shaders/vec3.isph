@@ -1,0 +1,87 @@
+#pragma once
+
+struct vec3
+{
+    double x, y, z;
+};
+
+inline vec3 make_vec3(double _x, double _y, double _z)
+{
+    vec3 v;
+    v.x = _x;
+    v.y = _y;
+    v.z = _z;
+
+    return v;
+}
+
+inline vec3 operator-(vec3& v)
+{
+    v.x *= -1.0;
+    v.y *= -1.0;
+    v.z *= -1.0;
+
+    return v;
+}
+
+inline vec3 operator+(vec3& a, vec3& b)
+{
+    return make_vec3(a.x + b.x, a.y + b.y, a.z + b.z);
+}
+
+inline vec3 operator-(vec3& a, vec3& b)
+{
+    return make_vec3(a.x - b.x, a.y - b.y, a.z - b.z);
+}
+
+inline vec3 operator*(vec3& v, double k)
+{
+    v.x *= k;
+    v.y *= k;
+    v.z *= k;
+
+    return v;
+}
+
+inline vec3 operator*(double k, vec3& v)
+{
+    v.x *= k;
+    v.y *= k;
+    v.z *= k;
+
+    return v;
+}
+
+inline vec3 operator/(vec3& v, double k)
+{
+    return (v * rcp(k));
+}
+
+inline double length_squared(vec3& v)
+{
+    return v.x * v.x + v.y * v.y + v.z * v.z;
+}
+
+inline double length(vec3& v)
+{
+    return sqrt(length_squared(v));
+}
+
+inline double dot(vec3& u, vec3& v)
+{
+    return u.x * v.x + u.y * v.y + u.z * v.z;
+}
+
+inline vec3 cross(vec3& u, vec3& v)
+{
+    return make_vec3(
+        u.y * v.z - u.z * v.y,
+        u.z * v.x - v.x * v.z,
+        u.x * v.y - u.y * v.x
+    );
+}
+
+inline vec3 unit_vec3(vec3& v)
+{
+    return v * rcp(length(v));
+}
