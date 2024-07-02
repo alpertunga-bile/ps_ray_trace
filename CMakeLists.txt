@@ -14,9 +14,17 @@ endif()
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 # -- Files
 
-file(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders/*.h ${CMAKE_CURRENT_SOURCE_DIR}/includes/*.h)
+file(GLOB HEADER_FILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders/*.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/includes/*.h
+)
+
 file(GLOB ISPC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders/*.ispc)
-file(GLOB CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/*.cpp main.cpp)
+
+file(GLOB CPP_FILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/*.cpp 
+    main.cpp
+)
 
 set(SRC_FILES 
     ${ISPC_FILES}
@@ -25,9 +33,12 @@ set(SRC_FILES
 )
 
 include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt/include/fmt
     ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders
     ${CMAKE_CURRENT_SOURCE_DIR}/includes
 )
+
+add_subdirectory(third-party/fmt)
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 # -- Executable Creation
@@ -56,6 +67,8 @@ endif()
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 # -- Executable Configurations
+
+target_link_libraries(${PROJECT_NAME} fmt::fmt)
 
 target_precompile_headers(
     ${PROJECT_NAME} PRIVATE
