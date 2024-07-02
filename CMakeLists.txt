@@ -81,11 +81,26 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY ISPC_INSTRUCTION_SETS "avx2")
 
 if (${CMAKE_BUILD_TYPE} MATCHES Debug)
+    set(ISPC_OPT_FLAG -g)
     target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-g>)
     target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-O0>)
 elseif(${CMAKE_BUILD_TYPE} MATCHES Release)
+    set(ISPC_OPT_FLAG -O2)
     target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-O2>)
 endif()
+
+foreach(ISPC_FILE ${ISPC_FILES})
+    get_filename_component(ISPC_FILENAME ${ISPC_FILE} NAME_WE)
+
+    add_custom_target(
+        ${ISPC_FILENAME}_ISPC_TARGET
+        COMMAND ${CMAKE_ISPC_COMPILER} ${ISPC_FILE} -o ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders/${ISPC_FILENAME}.h ${ISPC_OPT_FLAG} -I ispc_shaders/ --target avx2 
+    )
+
+    add_dependencies(${PROJECT_NAME} ${ISPC_FILENAME}_ISPC_TARGET)
+    
+endforeach(ISPC_FILE)
+
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
