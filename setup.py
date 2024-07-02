@@ -11,6 +11,9 @@ from argparse import ArgumentParser
 # --------------------------------------------------------------------------------------------------------------------
 # -- Environment Functions
 
+third_party_folder = "third-party"
+ispc_folder = join(third_party_folder, "ispc")
+
 
 def run_command(command: str) -> bool:
     process = run(command, shell=True, capture_output=True, check=True)
@@ -82,14 +85,25 @@ def download_ispc_zip(version: str, ispc_zip_filename: str) -> None:
 
 
 def prepare_ispc(version: str, ispc_zip_filename: str) -> None:
-    download_ispc_zip(version, ispc_zip_filename)
+    if exists(ispc_zip_filename) is False:
+        download_ispc_zip(version, ispc_zip_filename)
+    else:
+        print("/_\\ ISPC zip file is already installed")
 
-    print("/_\ Extracting ISPC")
-    with ZipFile(ispc_zip_filename, "r") as zip_f:
-        zip_f.extractall()
+    ispc_extracted_folder_name = ispc_zip_filename[:-4]
 
-    rename(ispc_zip_filename[:-4], "ispc")
-    remove(ispc_zip_filename)
+    if exists(ispc_extracted_folder_name):
+        print(f"/_\\ {ispc_zip_filename} is already extracted")
+    else:
+        print("/_\ Extracting ISPC")
+        with ZipFile(ispc_zip_filename, "r") as zip_f:
+            zip_f.extractall(third_party_folder)
+
+    if exists(ispc_folder) is False:
+        rename(ispc_extracted_folder_name, ispc_folder)
+
+    if exists(ispc_zip_filename):
+        remove(ispc_zip_filename)
 
     print("/_\ Preparing ISPC is completed")
 
@@ -124,11 +138,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     opsys = system()
-    third_party_folder = "third-party"
 
     if exists(third_party_folder) is False:
-        mkdir("third-party")
-        print("/_\ Third party is created")
+        mkdir(third_party_folder)
+        print(f"/_\ {third_party_folder} is created")
 
     if opsys != "Windows":
         print(
@@ -140,7 +153,6 @@ if __name__ == "__main__":
         prepare_venv()
         exit(0)
 
-    ispc_folder = join(third_party_folder, "ispc")
     ispc_version = get_current_version_ispc()
     ispc_zip_filename = get_zipfilepath(third_party_folder, ispc_version)
 
