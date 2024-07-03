@@ -20,6 +20,20 @@ typedef int bool;
 #ifdef __cplusplus
 namespace ispc { /* namespace */
 #endif // __cplusplus
+///////////////////////////////////////////////////////////////////////////
+// Vector types with external visibility from ispc code
+///////////////////////////////////////////////////////////////////////////
+
+#ifndef __ISPC_VECTOR_float3__
+#define __ISPC_VECTOR_float3__
+#ifdef _MSC_VER
+__declspec( align(16) ) struct float3 { float v[3]; };
+#else
+struct float3 { float v[3]; } __attribute__ ((aligned(16)));
+#endif
+#endif
+
+
 
 #ifndef __ISPC_ALIGN__
 #if defined(__clang__) || !defined(_MSC_VER)
@@ -33,6 +47,16 @@ namespace ispc { /* namespace */
 #endif
 #endif
 
+#ifndef __ISPC_STRUCT_CameraVariables__
+#define __ISPC_STRUCT_CameraVariables__
+struct CameraVariables {
+    float focal_length;
+    struct float3  origin;
+    float viewport_width;
+    float viewport_height;
+};
+#endif
+
 
 ///////////////////////////////////////////////////////////////////////////
 // Functions exported from ispc code
@@ -40,7 +64,11 @@ namespace ispc { /* namespace */
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 extern "C" {
 #endif // __cplusplus
-    extern void trace(uint8_t * pixels, uint32_t image_width, uint32_t image_height, float viewport_width, float viewport_height);
+#if defined(__cplusplus)
+    extern void trace(uint8_t * pixels, struct CameraVariables &camera_vars, uint32_t image_width, uint32_t image_height);
+#else
+    extern void trace(uint8_t * pixels, struct CameraVariables *camera_vars, uint32_t image_width, uint32_t image_height);
+#endif // trace function declaraion
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 } /* end extern C */
 #endif // __cplusplus

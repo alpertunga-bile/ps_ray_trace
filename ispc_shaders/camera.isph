@@ -1,7 +1,14 @@
 #pragma once
 
-#include "vec3.isph"
 #include "ray.isph"
+
+struct CameraVariables
+{
+    float focal_length;
+    vec3 origin;
+    float viewport_width;
+    float viewport_height;
+};
 
 struct Camera
 {
@@ -12,20 +19,24 @@ struct Camera
     vec3 start_pixel_loc;
 };
 
-inline Camera make_camera(float focal_length, vec3& origin, int32 image_width, int32 image_height, float viewport_width, float viewport_height)
+inline Camera make_camera(
+    uniform CameraVariables& vars, 
+    uniform int32 image_width, 
+    uniform int32 image_height
+)
 {
     Camera cam;
 
-    cam.focal_length = focal_length;
-    cam.origin = origin;
+    cam.focal_length = vars.focal_length;
+    cam.origin = vars.origin;
 
-    vec3 viewport_u = make_vec3(viewport_width, 0, 0);
-    vec3 viewport_v = make_vec3(0, -viewport_height, 0);
+    vec3 viewport_u = make_vec3(vars.viewport_width, 0, 0);
+    vec3 viewport_v = make_vec3(0, -vars.viewport_height, 0);
 
     cam.pixel_delta_u = viewport_u / (float)(image_width);
     cam.pixel_delta_v = viewport_v / (float)(image_height);
 
-    vec3 viewport_upper_left = origin - make_vec3(0, 0, focal_length) - viewport_u / 2.0 - viewport_v / 2.0;
+    vec3 viewport_upper_left = cam.origin - make_vec3(0, 0, cam.focal_length) - viewport_u / 2.0 - viewport_v / 2.0;
 
     cam.start_pixel_loc = viewport_upper_left + 0.5 * (cam.pixel_delta_u + cam.pixel_delta_v);
 

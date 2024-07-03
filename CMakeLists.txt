@@ -23,6 +23,7 @@ set(ISPC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders)
 set(HEADER_FILES
     ${INCLUDE_DIR}/image_writer.h 
     ${INCLUDE_DIR}/stb_image_write.h    
+    ${INCLUDE_DIR}/utility.h
 )
 
 set(ISPC_FILES
@@ -31,6 +32,7 @@ set(ISPC_FILES
 
 set(CPP_FILES
     ${SOURCE_DIR}/image_writer.cpp
+    ${SOURCE_DIR}/utility.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
