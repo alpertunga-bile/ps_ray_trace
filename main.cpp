@@ -1,30 +1,21 @@
-#include "os.h"
-
 #include "ispc_shaders/tracer.h"
 
-constexpr size_t WIDTH = 256;
-constexpr size_t HEIGHT = 256;
-constexpr size_t TOTAL_VALUES = WIDTH * HEIGHT * 3;
+#include "image_writer.h"
+
+#include <filesystem>
 
 int main() {
-  float pixels[TOTAL_VALUES];
-  int32_t colors[TOTAL_VALUES];
+  constexpr uint32_t WIDTH = 256;
+  constexpr uint32_t HEIGHT = 256;
+  constexpr size_t TOTAL_VALUES = WIDTH * HEIGHT * 3;
+  constexpr const char *FILENAME = "test";
 
-  ispc::calculate_pixels(pixels, WIDTH, HEIGHT);
-  ispc::calculate_colors(pixels, colors, TOTAL_VALUES);
+  std::string filepath = (std::filesystem::path("outputs") / FILENAME).string();
 
-  auto out_file = fmt::output_file("test.ppm");
+  uint8_t pixels[TOTAL_VALUES];
 
-  out_file.print("P3\n{} {}\n255\n", WIDTH, HEIGHT);
+  ispc::trace(pixels, WIDTH, HEIGHT);
 
-  for (size_t col = 0; col < WIDTH; ++col) {
-    for (size_t row = 0; row < HEIGHT; ++row) {
-      size_t index = col * WIDTH + row;
-
-      out_file.print("{} {} {}\n", colors[index], colors[index + 1],
-                     colors[index + 2]);
-    }
-  }
-
-  out_file.close();
+  write_to_png(filepath.c_str(), pixels, WIDTH, HEIGHT);
+  write_to_ppm(filepath.c_str(), pixels, WIDTH, HEIGHT);
 }

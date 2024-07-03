@@ -4,6 +4,8 @@ project(ps_ray_trace VERSION 0.1.0 LANGUAGES C CXX)
 include(CTest)
 enable_testing()
 
+set(CMAKE_BUILD_TYPE "Release")
+
 if(WIN32)
     add_compile_definitions(WIN32)
     if(MSVC)
@@ -11,19 +13,26 @@ if(WIN32)
     endif()
 endif()
 
+set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/includes)
+set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/sources)
+set(ISPC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders)
+
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 # -- Files
 
-file(GLOB HEADER_FILES 
-    ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders/*.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/includes/*.h
+set(HEADER_FILES
+    ${INCLUDE_DIR}/image_writer.h 
+    ${INCLUDE_DIR}/stb_image_write.h    
 )
 
-file(GLOB ISPC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders/*.ispc)
+set(ISPC_FILES
+    ${ISPC_DIR}/tracer.ispc
+)
 
-file(GLOB CPP_FILES 
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/*.cpp 
-    main.cpp
+set(CPP_FILES
+    ${SOURCE_DIR}/image_writer.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
 set(SRC_FILES 
@@ -94,7 +103,7 @@ foreach(ISPC_FILE ${ISPC_FILES})
 
     add_custom_target(
         ${ISPC_FILENAME}_ISPC_TARGET
-        COMMAND ${CMAKE_ISPC_COMPILER} ${ISPC_FILE} -h ${CMAKE_CURRENT_SOURCE_DIR}/ispc_shaders/${ISPC_FILENAME}.h -o ${ISPC_FILENAME}.obj ${ISPC_OPT_FLAG} -I ispc_shaders/ --target avx2 
+        COMMAND ${CMAKE_ISPC_COMPILER} ${ISPC_FILE} -h ${ISPC_DIR}/${ISPC_FILENAME}.h -o ${ISPC_FILENAME}.obj ${ISPC_OPT_FLAG} -I ispc_shaders/ --target avx2 
     )
 
     add_dependencies(${PROJECT_NAME} ${ISPC_FILENAME}_ISPC_TARGET)
