@@ -6,7 +6,7 @@ vec3 get_traced_color(Ray& r)
 
     float a = 0.5 * (unit_dir.y + 1.0);
 
-    return (1.0 - a) * make_vec3(1.0, 1.0, 1.0) + a * make_vec3(0.3, 0.3, 1.0);
+    return linterp(make_vec3(1.0, 1.0, 1.0), make_vec3(0.3, 0.3, 1.0), a);
 }
 
 export void trace(
@@ -19,7 +19,7 @@ export void trace(
 {
     Camera cam = make_camera(1.0, make_vec3(0.0, 0.0, 0.0), image_width, image_height, viewport_width, viewport_height);
 
-    foreach_tiled(row = 0 ... image_width, col = 0 ... image_height )
+    foreach_tiled(row = 0 ... image_width, col = 0 ... image_height)
     {        
         Ray r = get_ray(cam, row, col);
 
