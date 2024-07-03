@@ -31,7 +31,7 @@ inline Camera make_camera(
     cam.origin = vars.origin;
 
     vec3 viewport_u = make_vec3(vars.viewport_width, 0, 0);
-    vec3 viewport_v = make_vec3(0, -vars.viewport_height, 0);
+    vec3 viewport_v = make_vec3(0, -1.0 * vars.viewport_height, 0);
 
     cam.pixel_delta_u = viewport_u / (float)(image_width);
     cam.pixel_delta_v = viewport_v / (float)(image_height);

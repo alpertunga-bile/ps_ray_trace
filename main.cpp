@@ -3,11 +3,13 @@
 #include "image_writer.h"
 #include "utility.h"
 
-#include <filesystem>
+#include "os.h"
 
 int main() {
   // ----------------------------------------------------------------------------------------
   // -- Configurable Parameters
+  constexpr const char *filename = "sphere_normal";
+
   // ideal ratio
   constexpr float aspect_ratio = 16.0f / 9.0f;
   constexpr uint32_t image_height = 400;
@@ -36,9 +38,7 @@ int main() {
   // ----------------------------------------------------------------------------------------
   // -- Write the outputs
 
-  constexpr const char *filename = "test";
-
-  std::string filepath = (std::filesystem::path("outputs") / filename).string();
+  std::string filepath = fmt::format("outputs/{}", filename);
 
   write_to_png(filepath.c_str(), pixels, image_width, image_height);
   write_to_ppm(filepath.c_str(), pixels, image_width, image_height);

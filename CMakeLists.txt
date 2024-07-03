@@ -28,6 +28,7 @@ set(HEADER_FILES
 
 set(ISPC_FILES
     ${ISPC_DIR}/tracer.ispc
+    ${ISPC_DIR}/sphere.ispc
 )
 
 set(CPP_FILES

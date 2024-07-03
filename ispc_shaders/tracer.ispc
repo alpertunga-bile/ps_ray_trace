@@ -1,27 +1,37 @@
 #include "camera.isph"
 
-bool hit_sphere(const vec3& center, float radius, const Ray& r)
+float hit_sphere(const vec3& center, float radius, const Ray& r)
 {
     const vec3 oc = center - r.origin;
     
-    float a = dot(r.dir, r.dir);
-    float b = -2.0 * dot(r.dir, oc);
-    float c = dot(oc, oc) - radius * radius;
+    float a = length_squared(r.dir);
+    float h = dot(r.dir, oc);
+    float c = length_squared(oc) - radius * radius;
+    float discriminant = h * h - a * c;
 
-    float discriminant = b * b - 4 * a * c;
-    return (discriminant >= 0);
+    if(discriminant < 0.0)
+    {
+        return -1.0;
+    }
+    else
+    {
+        return (h + sqrt(discriminant)) * rcp(a);
+    }
 }
 
 vec3 get_traced_color(Ray& r)
 {
-    if(hit_sphere(make_vec3(0, 0, -1), 0.5, r))
+    float t = hit_sphere(make_vec3(0, 0, -1), 0.5, r);
+
+    if(t > 0.0)
     {
-        return make_vec3(1, 0, 0);
+        vec3 N = unit_vec3(ray_at(r, t) - make_vec3(0, 0, -1));
+        return 0.5 * make_vec3(N.x + 1, N.y + 1, N.z + 1);
     }
 
     vec3 unit_dir = unit_vec3(r.dir);
     float a = 0.5 * (unit_dir.y + 1.0);
-    return linterp(make_vec3(1.0, 1.0, 1.0), make_vec3(0.3, 0.3, 1.0), a);
+    return linterp(make_vec3(1.0, 1.0, 1.0), make_vec3(0.5, 0.7, 1.0), a);
 }
 
 export void trace(

@@ -1,0 +1,10 @@
+#pragma once
+
+#include "vec3.isph"
+
+struct HitRecord
+{
+    vec3 pos;
+    vec3 normal;
+    float t;
+};

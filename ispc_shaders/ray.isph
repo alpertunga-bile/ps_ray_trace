@@ -17,7 +17,7 @@ inline Ray make_ray(vec3& origin, vec3& direction)
     return r;
 }
 
-inline vec3 ray_at(Ray& r, double t)
+inline vec3 ray_at(const Ray& r, float t)
 {
     return r.origin + t * r.dir; 
 }
