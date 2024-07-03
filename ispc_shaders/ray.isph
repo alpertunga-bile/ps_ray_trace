@@ -2,22 +2,22 @@
 
 #include "vec3.isph"
 
-struct ray
+struct Ray
 {
     vec3 origin;
     vec3 dir;
 };
 
-inline ray make_ray(vec3& origin, vec3& direction)
+inline Ray make_ray(vec3& origin, vec3& direction)
 {
-    ray r;
+    Ray r;
     r.origin = origin;
     r.dir = direction;
 
     return r;
 }
 
-inline vec3 ray_at(ray& r, double t)
+inline vec3 ray_at(Ray& r, double t)
 {
     return r.origin + t * r.dir; 
 }

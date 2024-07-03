@@ -1,20 +1,37 @@
-#include "vec3.isph"
+#include "camera.isph"
 
-export void trace(uniform uint8 pixels[], uniform uint32 width, uniform uint32 height)
+vec3 get_traced_color(Ray& r)
 {
-    foreach_tiled(row = 0 ... width, col = 0 ... height )
-    {
-        int index = (col * width + row) * 3;
+    vec3 unit_dir = unit_vec3(r.dir);
 
-        float r = (float)(row) * rcp((uniform float)(width - 1));
-        float g = (float)(col) * rcp((uniform float)(height - 1));
-        float b = 0.0;
+    float a = 0.5 * (unit_dir.y + 1.0);
+
+    return (1.0 - a) * make_vec3(1.0, 1.0, 1.0) + a * make_vec3(0.3, 0.3, 1.0);
+}
+
+export void trace(
+    uniform uint8 pixels[], 
+    uniform uint32 image_width, 
+    uniform uint32 image_height,
+    uniform float viewport_width,
+    uniform float viewport_height
+)
+{
+    Camera cam = make_camera(1.0, make_vec3(0.0, 0.0, 0.0), image_width, image_height, viewport_width, viewport_height);
+
+    foreach_tiled(row = 0 ... image_width, col = 0 ... image_height )
+    {        
+        Ray r = get_ray(cam, row, col);
+
+        vec3 color = get_traced_color(r);
+
+        int index = (col * image_width + row) * 3;
 
         #pragma ignore warning(perf)
-        pixels[index] = float_to_srgb8(r);
+        pixels[index] = float_to_srgb8(color.r);
         #pragma ignore warning(perf)
-        pixels[index + 1] = float_to_srgb8(g);
+        pixels[index + 1] = float_to_srgb8(color.g);
         #pragma ignore warning(perf)
-        pixels[index + 2] = float_to_srgb8(b);
+        pixels[index + 2] = float_to_srgb8(color.b);
     }
 }

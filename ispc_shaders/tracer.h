@@ -40,7 +40,7 @@ namespace ispc { /* namespace */
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 extern "C" {
 #endif // __cplusplus
-    extern void trace(uint8_t * pixels, uint32_t width, uint32_t height);
+    extern void trace(uint8_t * pixels, uint32_t image_width, uint32_t image_height, float viewport_width, float viewport_height);
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 } /* end extern C */
 #endif // __cplusplus

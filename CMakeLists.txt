@@ -61,6 +61,8 @@ if(WIN32)
     endif()
 
     set(CMAKE_ISPC_COMPILER ${ISPC_EXECUTABLE})
+elseif(LINUX)
+    find_package(ispc REQUIRED)
 endif()
 
 if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.19.2 AND (("${CMAKE_GENERATOR}" MATCHES "Make") OR ("${CMAKE_GENERATOR}" MATCHES "Ninja")) )
@@ -103,7 +105,7 @@ foreach(ISPC_FILE ${ISPC_FILES})
 
     add_custom_target(
         ${ISPC_FILENAME}_ISPC_TARGET
-        COMMAND ${CMAKE_ISPC_COMPILER} ${ISPC_FILE} -h ${ISPC_DIR}/${ISPC_FILENAME}.h -o ${ISPC_FILENAME}.obj ${ISPC_OPT_FLAG} -I ispc_shaders/ --target avx2 
+        COMMAND ${CMAKE_ISPC_COMPILER} ${ISPC_FILE} -h ${ISPC_DIR}/${ISPC_FILENAME}.h -o ${ISPC_FILENAME}.obj ${ISPC_OPT_FLAG} -I ${ISPC_DIR}/ --target avx2 
     )
 
     add_dependencies(${PROJECT_NAME} ${ISPC_FILENAME}_ISPC_TARGET)
