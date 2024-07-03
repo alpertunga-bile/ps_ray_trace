@@ -82,3 +82,13 @@ inline vec3 unit_vec3(vec3& v)
 {
     return v * rcp(length(v));
 }
+
+inline float linterp(float start, float end, float alpha)
+{
+    return (1.0 - alpha) * start + alpha * end; 
+}
+
+inline vec3 linterp(vec3& start, vec3& end, float alpha)
+{
+    return (1.0 - alpha) * start + alpha * end;
+}
