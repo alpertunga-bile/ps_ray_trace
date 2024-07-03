@@ -4,15 +4,15 @@ from os import rename, remove, mkdir
 from platform import system
 from subprocess import run
 from shutil import rmtree
-
-
 from argparse import ArgumentParser
+import tarfile
 
 # --------------------------------------------------------------------------------------------------------------------
 # -- Environment Functions
 
 third_party_folder = "third-party"
 ispc_folder = join(third_party_folder, "ispc")
+os_name = system()
 
 
 def run_command(command: str) -> bool:
@@ -39,10 +39,27 @@ def prepare_venv() -> None:
 
 # --------------------------------------------------------------------------------------------------------------------
 # -- Downloading ISPC functions
+def get_zipname(version: str) -> str:
+    if os_name == "Windows":
+        return f"ispc-v{version}-windows.zip"
+    elif os_name == "Linux":
+        return f"ispc-v{version}-linux.tar.gz"
 
 
 def get_zipfilepath(folder: str, version: str) -> str:
-    return join(folder, f"ispc-v{version}-windows.zip")
+    if os_name == "Windows":
+        return join(folder, f"ispc-v{version}-windows.zip")
+    elif os_name == "Linux":
+        return join(folder, f"ispc-v{version}-linux.tar.gz")
+
+
+def extract_zip_file(zip_filename: str, extract_path: str) -> None:
+    if os_name == "Windows":
+        with ZipFile(zip_filename, "r") as zip_f:
+            zip_f.extractall(extract_path)
+    elif os_name == "Linux":
+        zip_f = tarfile.open(zip_filename, mode="r:gz")
+        zip_f.extractall(extract_path)
 
 
 def get_current_version_ispc() -> str:
@@ -62,7 +79,7 @@ def download_ispc_zip(version: str, ispc_zip_filename: str) -> None:
     from requests import get
     from tqdm import tqdm
 
-    zip_url = f"https://github.com/ispc/ispc/releases/download/v{version}/ispc-v{version}-windows.zip"
+    zip_url = f"https://github.com/ispc/ispc/releases/download/v{version}/{get_zipname(version)}"
 
     req = get(zip_url, stream=True)
 
@@ -90,14 +107,16 @@ def prepare_ispc(version: str, ispc_zip_filename: str) -> None:
     else:
         print("/_\\ ISPC zip file is already installed")
 
-    ispc_extracted_folder_name = ispc_zip_filename[:-4]
+    if os_name == "Windows":
+        ispc_extracted_folder_name = ispc_zip_filename[:-4]
+    elif os_name == "Linux":
+        ispc_extracted_folder_name = ispc_zip_filename[:-7]
 
     if exists(ispc_extracted_folder_name):
         print(f"/_\\ {ispc_zip_filename} is already extracted")
     else:
         print("/_\ Extracting ISPC")
-        with ZipFile(ispc_zip_filename, "r") as zip_f:
-            zip_f.extractall(third_party_folder)
+        extract_zip_file(ispc_zip_filename, third_party_folder)
 
     if exists(ispc_folder) is False:
         rename(ispc_extracted_folder_name, ispc_folder)
@@ -126,7 +145,7 @@ def upgrade_ispc(third_party_folder: str, ispc_folder: str) -> None:
     print(f"/_\ Removing ISPC {installed_version}")
     rmtree(ispc_folder)
 
-    new_ispc_zip_filename = get_zipfilepath(third_party_folder, current_version)
+    new_ispc_zip_filename = join(third_party_folder, get_zipname(v_current_version))
 
     prepare_ispc(current_version, new_ispc_zip_filename)
 
@@ -137,17 +156,9 @@ if __name__ == "__main__":
     parser.add_argument("--setup_project", action="store_true", default=False)
     args = parser.parse_args()
 
-    opsys = system()
-
     if exists(third_party_folder) is False:
         mkdir(third_party_folder)
         print(f"/_\ {third_party_folder} is created")
-
-    if opsys != "Windows":
-        print(
-            "Currently supporting Windows OS for the ispc setup. Please install the ispc from the package manager."
-        )
-        exit(0)
 
     if args.setup_env:
         prepare_venv()

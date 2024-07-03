@@ -56,7 +56,7 @@ add_subdirectory(third-party/fmt)
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 # -- Executable Creation
 
-if(WIN32)
+if(WIN32 OR LINUX)
     find_program(ISPC_EXECUTABLE ispc PATHS ${CMAKE_CURRENT_SOURCE_DIR}/third-party/ispc/bin)
     if (NOT ISPC_EXECUTABLE)
         message(FATAL_ERROR "Failed to find ispc")
