@@ -1,32 +1,13 @@
 #include "camera.isph"
 
-float hit_sphere(const vec3& center, float radius, const Ray& r)
+#include "hittable.isph"
+
+inline vec3 get_traced_color(Ray& r, uniform Sphere spheres[], uniform int32 sphere_count)
 {
-    const vec3 oc = center - r.origin;
-    
-    float a = length_squared(r.dir);
-    float h = dot(r.dir, oc);
-    float c = length_squared(oc) - radius * radius;
-    float discriminant = h * h - a * c;
-
-    if(discriminant < 0.0)
+    HitRecord hit_record;
+    if(world_hit(spheres, sphere_count, r, 0.0, FLT_MAX, hit_record))
     {
-        return -1.0;
-    }
-    else
-    {
-        return (h + sqrt(discriminant)) * rcp(a);
-    }
-}
-
-vec3 get_traced_color(Ray& r)
-{
-    float t = hit_sphere(make_vec3(0, 0, -1), 0.5, r);
-
-    if(t > 0.0)
-    {
-        vec3 N = unit_vec3(ray_at(r, t) - make_vec3(0, 0, -1));
-        return 0.5 * make_vec3(N.x + 1, N.y + 1, N.z + 1);
+        return 0.5 * (hit_record.normal + make_vec3(1, 1, 1));
     }
 
     vec3 unit_dir = unit_vec3(r.dir);
@@ -37,6 +18,8 @@ vec3 get_traced_color(Ray& r)
 export void trace(
     uniform uint8 pixels[], 
     uniform CameraVariables& camera_vars,
+    uniform Sphere spheres[],
+    uniform int32 sphere_count,
     uniform uint32 image_width, 
     uniform uint32 image_height
 )
@@ -47,7 +30,7 @@ export void trace(
     {        
         Ray r = get_ray(cam, row, col);
 
-        vec3 color = get_traced_color(r);
+        vec3 color = get_traced_color(r, spheres, sphere_count);
 
         int index = (col * image_width + row) * 3;
 

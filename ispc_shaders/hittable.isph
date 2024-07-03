@@ -1,0 +1,6 @@
+#pragma once
+
+#include "hit_record.isph"
+#include "sphere.isph"
+
+bool world_hit(uniform Sphere spheres[], uniform int32 sphere_count, const Ray& r, float ray_tmin, float ray_tmax, HitRecord& hit_record);

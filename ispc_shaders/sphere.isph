@@ -1,7 +1,6 @@
 #pragma once
 
 #include "hit_record.isph"
-#include "ray.isph"
 
 struct Sphere
 {

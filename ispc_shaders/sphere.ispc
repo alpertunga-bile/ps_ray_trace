@@ -31,7 +31,8 @@ bool hit_sphere(const Sphere& sphere, const Ray& r, float ray_tmin, float ray_tm
 
     hit_record.t = root;
     hit_record.pos = ray_at(r, root);
-    hit_record.normal = (hit_record.pos - sphere.center) * rcp(sphere.radius);
+    vec3 outward_normal = (hit_record.pos - sphere.center) * rcp(sphere.radius);
+    hit_rec_set_face_normal(hit_record, r, outward_normal);
 
     return true;
 }

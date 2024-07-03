@@ -1,10 +1,17 @@
 #pragma once
 
-#include "vec3.isph"
+#include "ray.isph"
 
 struct HitRecord
 {
     vec3 pos;
     vec3 normal;
     float t;
+    bool front_face;
 };
+
+inline void hit_rec_set_face_normal(HitRecord& hit_record, const Ray& r, const vec3& unit_outward_normal)
+{
+   hit_record.front_face = dot(r.dir, unit_outward_normal) < 0.0;
+   hit_record.normal = hit_record.front_face ? unit_outward_normal : -unit_outward_normal; 
+}

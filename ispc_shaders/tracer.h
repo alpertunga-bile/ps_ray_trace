@@ -57,6 +57,14 @@ struct CameraVariables {
 };
 #endif
 
+#ifndef __ISPC_STRUCT_Sphere__
+#define __ISPC_STRUCT_Sphere__
+struct Sphere {
+    struct float3  center;
+    float radius;
+};
+#endif
+
 
 ///////////////////////////////////////////////////////////////////////////
 // Functions exported from ispc code
@@ -65,9 +73,9 @@ struct CameraVariables {
 extern "C" {
 #endif // __cplusplus
 #if defined(__cplusplus)
-    extern void trace(uint8_t * pixels, struct CameraVariables &camera_vars, uint32_t image_width, uint32_t image_height);
+    extern void trace(uint8_t * pixels, struct CameraVariables &camera_vars, struct Sphere * spheres, int32_t sphere_count, uint32_t image_width, uint32_t image_height);
 #else
-    extern void trace(uint8_t * pixels, struct CameraVariables *camera_vars, uint32_t image_width, uint32_t image_height);
+    extern void trace(uint8_t * pixels, struct CameraVariables *camera_vars, struct Sphere * spheres, int32_t sphere_count, uint32_t image_width, uint32_t image_height);
 #endif // trace function declaraion
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 } /* end extern C */

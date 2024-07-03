@@ -3,12 +3,14 @@
 #include "image_writer.h"
 #include "utility.h"
 
+#include <vector>
+
 #include "os.h"
 
 int main() {
   // ----------------------------------------------------------------------------------------
   // -- Configurable Parameters
-  constexpr const char *filename = "sphere_normal";
+  constexpr const char *filename = "hittables";
 
   // ideal ratio
   constexpr float aspect_ratio = 16.0f / 9.0f;
@@ -33,7 +35,12 @@ int main() {
   cam_vars.viewport_width = viewport_width;
   cam_vars.viewport_height = viewport_height;
 
-  ispc::trace(pixels, cam_vars, image_width, image_height);
+  std::vector<ispc::Sphere> spheres;
+  spheres.push_back(make_sphere(make_float3(0, 0, -1), 0.5));
+  spheres.push_back(make_sphere(make_float3(0, -100.5, -1), 100));
+
+  ispc::trace(pixels, cam_vars, spheres.data(), spheres.size(), image_width,
+              image_height);
 
   // ----------------------------------------------------------------------------------------
   // -- Write the outputs

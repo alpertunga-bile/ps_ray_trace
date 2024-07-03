@@ -29,6 +29,7 @@ set(HEADER_FILES
 set(ISPC_FILES
     ${ISPC_DIR}/tracer.ispc
     ${ISPC_DIR}/sphere.ispc
+    ${ISPC_DIR}/hittable.ispc
 )
 
 set(CPP_FILES

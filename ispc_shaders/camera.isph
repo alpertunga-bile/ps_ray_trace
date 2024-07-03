@@ -48,5 +48,5 @@ inline Ray get_ray(Camera& cam, int32 row, int32 col)
     vec3 pixel_center = cam.start_pixel_loc + ((float)(row) * cam.pixel_delta_u) + ((float)(col) * cam.pixel_delta_v);
     vec3 ray_direction = pixel_center - cam.origin;
 
-    return make_ray(pixel_center, ray_direction);
+    return make_ray(cam.origin, ray_direction);
 }
