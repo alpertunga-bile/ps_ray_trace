@@ -42,8 +42,10 @@ int main() {
       make_lambertian_mat(make_float3(0.8, 0.8, 0.0));
   ispc::Material material_center =
       make_lambertian_mat(make_float3(0.1, 0.2, 0.5));
-  ispc::Material material_left = make_metal_mat(make_float3(0.8, 0.8, 0.8));
-  ispc::Material material_right = make_metal_mat(make_float3(0.8, 0.6, 0.2));
+  ispc::Material material_left =
+      make_metal_mat(make_float3(0.8, 0.8, 0.8), 0.3f);
+  ispc::Material material_right =
+      make_metal_mat(make_float3(0.8, 0.6, 0.2), 1.0f);
 
   std::vector<ispc::Sphere> spheres;
   spheres.push_back(

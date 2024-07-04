@@ -7,6 +7,7 @@ enum eMaterialType {DIFFUSE, METAL};
 struct Material
 {
     vec3 albedo;
+    float fuzz;
     eMaterialType material_type;
 };
 
@@ -43,9 +44,10 @@ inline bool scatter_lambertian(Ray& ray, HitRecord& record, vec3& attenuation, R
 inline bool scatter_metal(Ray& ray, HitRecord& record, vec3& attenuation, Ray& scattered)
 {
     vec3 reflected = reflect(ray.dir, record.normal);
+    reflected = unit_vec3(reflected) + (record.material.fuzz * random_unit_vector());
 
     scattered = make_ray(record.pos, reflected);
     attenuation = record.material.albedo;
 
-    return true;
+    return (dot(scattered.dir, record.normal) > 0.0);
 }

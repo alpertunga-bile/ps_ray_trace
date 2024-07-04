@@ -12,6 +12,7 @@ ispc::Sphere make_sphere(ispc::float3 center, float radius,
                          ispc::Material material);
 
 ispc::Material make_lambertian_mat(ispc::float3 albedo);
-ispc::Material make_metal_mat(ispc::float3 albedo);
+ispc::Material make_metal_mat(ispc::float3 albedo, float fuzz = 0.0f);
 
-ispc::Material make_material(ispc::float3 albedo, ispc::eMaterialType type);
+ispc::Material make_material(ispc::float3 albedo, float fuzz,
+                             ispc::eMaterialType type);

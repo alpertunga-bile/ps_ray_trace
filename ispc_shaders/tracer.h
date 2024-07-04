@@ -75,6 +75,7 @@ struct CameraVariables {
 #define __ISPC_STRUCT_Material__
 struct Material {
     struct float3  albedo;
+    float fuzz;
     enum eMaterialType material_type;
 };
 #endif

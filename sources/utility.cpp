@@ -24,17 +24,19 @@ ispc::Sphere make_sphere(ispc::float3 center, float radius,
 }
 
 ispc::Material make_lambertian_mat(ispc::float3 albedo) {
-  return make_material(albedo, ispc::eMaterialType::DIFFUSE);
+  return make_material(albedo, 1.0f, ispc::eMaterialType::DIFFUSE);
 }
 
-ispc::Material make_metal_mat(ispc::float3 albedo) {
-  return make_material(albedo, ispc::eMaterialType::METAL);
+ispc::Material make_metal_mat(ispc::float3 albedo, float fuzz) {
+  return make_material(albedo, fuzz, ispc::eMaterialType::METAL);
 }
 
-ispc::Material make_material(ispc::float3 albedo, ispc::eMaterialType type) {
+ispc::Material make_material(ispc::float3 albedo, float fuzz,
+                             ispc::eMaterialType type) {
   ispc::Material material;
 
   material.albedo = albedo;
+  material.fuzz = fuzz;
   material.material_type = type;
 
   return material;
