@@ -26,12 +26,21 @@ export void trace(
 {
     Camera cam = make_camera(camera_vars, image_width, image_height);
 
+    RNGState state;
+    seed_rng(&state, programIndex);
+
     foreach_tiled(row = 0 ... image_width, col = 0 ... image_height)
     {        
-        Ray r = get_ray(cam, row, col);
+        vec3 color = make_vec3(0, 0, 0);
 
-        vec3 color = get_traced_color(r, spheres, sphere_count);
+        for(int32 sample = 0; sample < camera_vars.samples_per_pixel; ++sample)
+        {
+            Ray r = get_ray(cam, (float)(row), (float)(col), state);
 
+            color += get_traced_color(r, spheres, sphere_count);
+        }
+
+        color *= cam.pixel_sample_scale;
         int index = (col * image_width + row) * 3;
 
         #pragma ignore warning(perf)

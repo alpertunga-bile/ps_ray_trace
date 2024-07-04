@@ -62,11 +62,8 @@ if(WIN32 OR LINUX)
         message(FATAL_ERROR "Failed to find ispc")
     else()
         message(STATUS "ispc is found")
+        set(CMAKE_ISPC_COMPILER ${ISPC_EXECUTABLE})
     endif()
-
-    set(CMAKE_ISPC_COMPILER ${ISPC_EXECUTABLE})
-elseif(LINUX)
-    find_package(ispc REQUIRED)
 endif()
 
 if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.19.2 AND (("${CMAKE_GENERATOR}" MATCHES "Make") OR ("${CMAKE_GENERATOR}" MATCHES "Ninja")) )
@@ -92,16 +89,17 @@ target_precompile_headers(
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
-set_property(TARGET ${PROJECT_NAME} PROPERTY ISPC_INSTRUCTION_SETS "avx2")
+if (NOT WIN32)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
 
 if (${CMAKE_BUILD_TYPE} MATCHES Debug)
-    set(ISPC_OPT_FLAG -g)
+    set(ISPC_OPT_FLAG "-g -O0")
     target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-g>)
     target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-O0>)
 elseif(${CMAKE_BUILD_TYPE} MATCHES Release)
-    set(ISPC_OPT_FLAG -O2)
-    target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-O2>)
+    set(ISPC_OPT_FLAG -O3)
+    target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:ISPC>:-O3>)
 endif()
 
 foreach(ISPC_FILE ${ISPC_FILES})
@@ -109,7 +107,7 @@ foreach(ISPC_FILE ${ISPC_FILES})
 
     add_custom_target(
         ${ISPC_FILENAME}_ISPC_TARGET
-        COMMAND ${CMAKE_ISPC_COMPILER} ${ISPC_FILE} -h ${ISPC_DIR}/${ISPC_FILENAME}.h -o ${ISPC_FILENAME}.obj ${ISPC_OPT_FLAG} -I ${ISPC_DIR}/ --target avx2 
+        COMMAND ${CMAKE_ISPC_COMPILER} ${ISPC_FILE} -h ${ISPC_DIR}/${ISPC_FILENAME}.h -o ${ISPC_FILENAME}.obj ${ISPC_OPT_FLAG} -I ${ISPC_DIR}/ 
     )
 
     add_dependencies(${PROJECT_NAME} ${ISPC_FILENAME}_ISPC_TARGET)

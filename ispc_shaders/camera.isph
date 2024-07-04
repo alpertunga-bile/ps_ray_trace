@@ -8,6 +8,7 @@ struct CameraVariables
     vec3 origin;
     float viewport_width;
     float viewport_height;
+    int32 samples_per_pixel;
 };
 
 struct Camera
@@ -17,6 +18,7 @@ struct Camera
     vec3 pixel_delta_u;
     vec3 pixel_delta_v;
     vec3 start_pixel_loc;
+    float pixel_sample_scale;
 };
 
 inline Camera make_camera(
@@ -40,12 +42,20 @@ inline Camera make_camera(
 
     cam.start_pixel_loc = viewport_upper_left + 0.5 * (cam.pixel_delta_u + cam.pixel_delta_v);
 
+    cam.pixel_sample_scale = 1.0 / vars.samples_per_pixel;
+
     return cam;
 }
 
-inline Ray get_ray(Camera& cam, int32 row, int32 col)
+inline Ray get_ray(Camera& cam, float row, float col, RNGState& state)
 {
-    vec3 pixel_center = cam.start_pixel_loc + ((float)(row) * cam.pixel_delta_u) + ((float)(col) * cam.pixel_delta_v);
+    vec3 offset = make_vec3(
+        frandom(&state) - 0.5,
+        frandom(&state) - 0.5,
+        0.0
+    );
+
+    vec3 pixel_center = cam.start_pixel_loc + ( (row + offset.x) * cam.pixel_delta_u) + ( (col + offset.y) * cam.pixel_delta_v);
     vec3 ray_direction = pixel_center - cam.origin;
 
     return make_ray(cam.origin, ray_direction);

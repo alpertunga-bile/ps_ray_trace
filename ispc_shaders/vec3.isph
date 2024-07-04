@@ -12,48 +12,6 @@ inline vec3 make_vec3(float _x, float _y, float _z)
     return v;
 }
 
-inline vec3 operator-(vec3& v)
-{
-    v.x *= -1.0;
-    v.y *= -1.0;
-    v.z *= -1.0;
-
-    return v;
-}
-
-inline vec3 operator+(vec3& a, vec3& b)
-{
-    return make_vec3(a.x + b.x, a.y + b.y, a.z + b.z);
-}
-
-inline vec3 operator-(vec3& a, vec3& b)
-{
-    return make_vec3(a.x - b.x, a.y - b.y, a.z - b.z);
-}
-
-inline vec3 operator*(vec3& v, float k)
-{
-    v.x *= k;
-    v.y *= k;
-    v.z *= k;
-
-    return v;
-}
-
-inline vec3 operator*(float k, vec3& v)
-{
-    v.x *= k;
-    v.y *= k;
-    v.z *= k;
-
-    return v;
-}
-
-inline vec3 operator/(vec3& v, float k)
-{
-    return v * rcp(k);
-}
-
 inline float length_squared(const vec3& v)
 {
     return v.x * v.x + v.y * v.y + v.z * v.z;

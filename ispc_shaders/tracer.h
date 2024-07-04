@@ -54,6 +54,7 @@ struct CameraVariables {
     struct float3  origin;
     float viewport_width;
     float viewport_height;
+    int32_t samples_per_pixel;
 };
 #endif
 

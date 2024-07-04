@@ -10,7 +10,7 @@
 int main() {
   // ----------------------------------------------------------------------------------------
   // -- Configurable Parameters
-  constexpr const char *filename = "hittables";
+  constexpr const char *filename = "antialiasing";
 
   // ideal ratio
   constexpr float aspect_ratio = 16.0f / 9.0f;
@@ -30,10 +30,12 @@ int main() {
   uint8_t pixels[total_values] = {0};
 
   ispc::CameraVariables cam_vars;
+  // distance between the camera and the viewport
   cam_vars.focal_length = 1.0f;
   cam_vars.origin = make_float3(0.0f, 0.0f, 0.0f);
   cam_vars.viewport_width = viewport_width;
   cam_vars.viewport_height = viewport_height;
+  cam_vars.samples_per_pixel = 100;
 
   std::vector<ispc::Sphere> spheres;
   spheres.push_back(make_sphere(make_float3(0, 0, -1), 0.5));
