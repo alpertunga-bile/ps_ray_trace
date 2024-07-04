@@ -12,11 +12,30 @@ ispc::float3 make_float3(float x, float y, float z) {
   return vec;
 }
 
-ispc::Sphere make_sphere(ispc::float3 center, float radius) {
+ispc::Sphere make_sphere(ispc::float3 center, float radius,
+                         ispc::Material material) {
   ispc::Sphere sphere;
 
   sphere.center = center;
   sphere.radius = radius;
+  sphere.material = material;
 
   return sphere;
+}
+
+ispc::Material make_lambertian_mat(ispc::float3 albedo) {
+  return make_material(albedo, ispc::eMaterialType::DIFFUSE);
+}
+
+ispc::Material make_metal_mat(ispc::float3 albedo) {
+  return make_material(albedo, ispc::eMaterialType::METAL);
+}
+
+ispc::Material make_material(ispc::float3 albedo, ispc::eMaterialType type) {
+  ispc::Material material;
+
+  material.albedo = albedo;
+  material.material_type = type;
+
+  return material;
 }

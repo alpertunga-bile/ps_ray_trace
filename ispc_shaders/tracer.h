@@ -34,6 +34,18 @@ struct float3 { float v[3]; } __attribute__ ((aligned(16)));
 #endif
 
 
+///////////////////////////////////////////////////////////////////////////
+// Enumerator types with external visibility from ispc code
+///////////////////////////////////////////////////////////////////////////
+
+#ifndef __ISPC_ENUM_eMaterialType__
+#define __ISPC_ENUM_eMaterialType__
+enum eMaterialType {
+    DIFFUSE = 0,
+    METAL = 1 
+};
+#endif
+
 
 #ifndef __ISPC_ALIGN__
 #if defined(__clang__) || !defined(_MSC_VER)
@@ -55,6 +67,15 @@ struct CameraVariables {
     float viewport_width;
     float viewport_height;
     int32_t samples_per_pixel;
+    int32_t ray_max_depth;
+};
+#endif
+
+#ifndef __ISPC_STRUCT_Material__
+#define __ISPC_STRUCT_Material__
+struct Material {
+    struct float3  albedo;
+    enum eMaterialType material_type;
 };
 #endif
 
@@ -63,6 +84,7 @@ struct CameraVariables {
 struct Sphere {
     struct float3  center;
     float radius;
+    struct Material material;
 };
 #endif
 

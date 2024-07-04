@@ -10,7 +10,7 @@
 int main() {
   // ----------------------------------------------------------------------------------------
   // -- Configurable Parameters
-  constexpr const char *filename = "antialiasing";
+  constexpr const char *filename = "metal";
 
   // ideal ratio
   constexpr float aspect_ratio = 16.0f / 9.0f;
@@ -36,10 +36,24 @@ int main() {
   cam_vars.viewport_width = viewport_width;
   cam_vars.viewport_height = viewport_height;
   cam_vars.samples_per_pixel = 100;
+  cam_vars.ray_max_depth = 50;
+
+  ispc::Material material_ground =
+      make_lambertian_mat(make_float3(0.8, 0.8, 0.0));
+  ispc::Material material_center =
+      make_lambertian_mat(make_float3(0.1, 0.2, 0.5));
+  ispc::Material material_left = make_metal_mat(make_float3(0.8, 0.8, 0.8));
+  ispc::Material material_right = make_metal_mat(make_float3(0.8, 0.6, 0.2));
 
   std::vector<ispc::Sphere> spheres;
-  spheres.push_back(make_sphere(make_float3(0, 0, -1), 0.5));
-  spheres.push_back(make_sphere(make_float3(0, -100.5, -1), 100));
+  spheres.push_back(
+      make_sphere(make_float3(0.0, -100.5, -1.0), 100.0, material_ground));
+  spheres.push_back(
+      make_sphere(make_float3(0.0, 0.0, -1.2), 0.5, material_center));
+  spheres.push_back(
+      make_sphere(make_float3(-1.0, 0.0, -1.0), 0.5, material_left));
+  spheres.push_back(
+      make_sphere(make_float3(1.0, 0.0, -1.0), 0.5, material_right));
 
   ispc::trace(pixels, cam_vars, spheres.data(), spheres.size(), image_width,
               image_height);

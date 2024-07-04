@@ -9,6 +9,7 @@ struct CameraVariables
     float viewport_width;
     float viewport_height;
     int32 samples_per_pixel;
+    int32 ray_max_depth;
 };
 
 struct Camera
@@ -47,11 +48,11 @@ inline Camera make_camera(
     return cam;
 }
 
-inline Ray get_ray(Camera& cam, float row, float col, RNGState& state)
+inline Ray get_ray(Camera& cam, float row, float col)
 {
     vec3 offset = make_vec3(
-        frandom(&state) - 0.5,
-        frandom(&state) - 0.5,
+        random_float() - 0.5,
+        random_float() - 0.5,
         0.0
     );
 

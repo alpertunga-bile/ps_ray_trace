@@ -2,16 +2,50 @@
 
 #include "ray.isph"
 
+enum eMaterialType {DIFFUSE, METAL};
+
+struct Material
+{
+    vec3 albedo;
+    eMaterialType material_type;
+};
+
 struct HitRecord
 {
     vec3 pos;
     vec3 normal;
     float t;
     bool front_face;
+    Material material;
 };
 
 inline void hit_rec_set_face_normal(HitRecord& hit_record, const Ray& r, const vec3& unit_outward_normal)
 {
    hit_record.front_face = dot(r.dir, unit_outward_normal) < 0.0;
    hit_record.normal = hit_record.front_face ? unit_outward_normal : -unit_outward_normal; 
+}
+
+inline bool scatter_lambertian(Ray& ray, HitRecord& record, vec3& attenuation, Ray& scattered)
+{
+    vec3 scatter_direction = record.normal + random_unit_vector();
+
+    if(near_zero_vec3(scatter_direction))
+    {
+        scatter_direction = record.normal;
+    }
+
+    scattered = make_ray(record.pos, scatter_direction);
+    attenuation = record.material.albedo;
+
+    return true;
+}
+
+inline bool scatter_metal(Ray& ray, HitRecord& record, vec3& attenuation, Ray& scattered)
+{
+    vec3 reflected = reflect(ray.dir, record.normal);
+
+    scattered = make_ray(record.pos, reflected);
+    attenuation = record.material.albedo;
+
+    return true;
 }

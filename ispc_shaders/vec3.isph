@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utility.isph"
+
 typedef float<3> vec3;
 
 inline vec3 make_vec3(float _x, float _y, float _z)
@@ -36,6 +38,11 @@ inline vec3 cross(const vec3& u, const vec3& v)
     );
 }
 
+inline vec3 reflect(const vec3& v, const vec3& n)
+{
+    return v - 2 * dot(v, n) * n;
+}
+
 inline vec3 unit_vec3(vec3& v)
 {
     return v * rcp(length(v)); 
@@ -49,4 +56,56 @@ inline float linterp(float start, float end, float alpha)
 inline vec3 linterp(vec3& start, vec3& end, float alpha)
 {
     return (1.0 - alpha) * start + alpha * end;
+}
+
+inline vec3 make_vec3_random()
+{
+    return make_vec3(random_float(), random_float(), random_float());
+}
+
+inline bool near_zero_vec3(vec3& v)
+{
+    float epsilon = 1e-8;
+
+    return (abs(v.x) < epsilon, abs(v.y) < epsilon, abs(v.z) < epsilon);
+}
+
+inline vec3 make_vec3_random(float _min, float _max)
+{
+    return make_vec3(
+        random_float(_min, _max),
+        random_float(_min, _max),
+        random_float(_min, _max)
+    );
+}
+
+inline vec3 random_in_unit_sphere()
+{
+    while(true)
+    {
+        vec3 p = make_vec3_random(-1.0, 1.0);
+        if(length_squared(p) < 1.0)
+        {
+            return p;
+        }
+    }
+}
+
+inline vec3 random_unit_vector()
+{
+    return unit_vec3(random_in_unit_sphere());
+}
+
+inline vec3 random_on_hemisphere(const vec3& normal)
+{
+    vec3 unit_vec = random_unit_vector();
+
+    if(dot(unit_vec, normal) > 0.0)
+    {
+        return unit_vec;
+    }
+    else
+    {
+       return -unit_vec; 
+    }
 }

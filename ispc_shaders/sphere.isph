@@ -6,6 +6,7 @@ struct Sphere
 {
     vec3 center;
     float radius;
+    Material material;
 };
 
 inline Sphere make_sphere(const vec3& center, float radius)
