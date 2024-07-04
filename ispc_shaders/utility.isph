@@ -1,17 +1,13 @@
 #pragma once
 
+static RNGState state;
+
 inline float random_float()
 {
-    RNGState state;
-    seed_rng(&state, programIndex);
-
     return frandom(&state);
 }
 
 inline float random_float(float _min, float _max)
 {
-    RNGState state;
-    seed_rng(&state, programIndex);
-
     return clamp(frandom(&state) * _max, _min, _max);
 }

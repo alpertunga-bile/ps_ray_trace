@@ -58,16 +58,16 @@ inline vec3 linterp(vec3& start, vec3& end, float alpha)
     return (1.0 - alpha) * start + alpha * end;
 }
 
-inline vec3 make_vec3_random()
-{
-    return make_vec3(random_float(), random_float(), random_float());
-}
-
 inline bool near_zero_vec3(vec3& v)
 {
     float epsilon = 1e-8;
 
-    return (abs(v.x) < epsilon, abs(v.y) < epsilon, abs(v.z) < epsilon);
+    return (abs(v.x) < epsilon && abs(v.y) < epsilon && abs(v.z) < epsilon);
+}
+
+inline vec3 make_vec3_random()
+{
+    return make_vec3(random_float(), random_float(), random_float());
 }
 
 inline vec3 make_vec3_random(float _min, float _max)

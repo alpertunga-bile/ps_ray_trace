@@ -6,6 +6,7 @@
 
 vec3 get_traced_color(int32 max_depth, Ray& r, uniform Sphere spheres[], uniform int32 sphere_count)
 {
+/*
 #ifdef USE_LOOP
     vec3 accum_color = make_vec3(1.0, 1.0, 1.0);
     Ray ray = r;
@@ -33,6 +34,7 @@ vec3 get_traced_color(int32 max_depth, Ray& r, uniform Sphere spheres[], uniform
 
     return accum_color;
 #else
+*/
     if(max_depth <= 0)
     {
         return make_vec3(0, 0, 0);
@@ -62,14 +64,15 @@ vec3 get_traced_color(int32 max_depth, Ray& r, uniform Sphere spheres[], uniform
         {
             return attenuation * get_traced_color(max_depth - 1, scattered, spheres, sphere_count);
         }
-
-        return make_vec3(0.0, 0.0, 0.0);
+        else
+        {
+            return make_vec3(0.0, 0.0, 0.0);
+        }
     }
 
     vec3 unit_dir = unit_vec3(r.dir);
     float a = 0.5 * (unit_dir.y + 1.0);
     return linterp(make_vec3(1.0, 1.0, 1.0), make_vec3(0.5, 0.7, 1.0), a);
-#endif
 }
 
 inline float linear2gamma(float linear_component)
@@ -92,6 +95,8 @@ export void trace(
 )
 {
     Camera cam = make_camera(camera_vars, image_width, image_height);
+
+    seed_rng(&state, programIndex);
 
     foreach_tiled(row = 0 ... image_width, col = 0 ... image_height)
     {        
